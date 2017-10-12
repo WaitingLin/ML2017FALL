@@ -86,13 +86,14 @@ for i in range(iteration):
 # save model
 np.save("./model/model.npy",w)
 """
+
+
+
+#-----------------#
+#-----Testing-----#
+#-----------------#
 # read model
 w = np.load("./model/model.npy")
-
-
-#-----------------#
-#-----testing-----#
-#-----------------#
 test_x = []
 n_row = 0
 text = open(input_url, "r")

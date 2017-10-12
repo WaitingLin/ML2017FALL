@@ -97,7 +97,6 @@ cost1 = cost
 
 # save model
 np.save("./model/model_best.npy",w)
-"""
 
 # read model
 w = np.load("./model/model_best.npy")
@@ -247,10 +246,15 @@ if training_day != 20:
 	print("\033[94miteration: \033[95m%d  \033[92mCost: \033[95m%f \033[94mError:\033[95m%f"%(iteration1,cost1,error1))
 	print("\033[94miteration: \033[95m%d  \033[92mCost: \033[95m%f \033[94mError:\033[95m%f"%(iteration2,cost2,error2))
 	print("\033[94mAvg Err: \033[95m%f"%((error1+error2)/2))
+"""
+
 
 #-----------------#
 #-----Testing-----#
 #-----------------#
+# read model
+w = np.load("./model/model_best.npy")
+
 test_x = []
 n_row = 0
 text = open(input_url ,"r")
