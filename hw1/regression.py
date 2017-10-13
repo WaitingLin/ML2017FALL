@@ -14,8 +14,8 @@ training_day = 20
 iteration = 1000000
 
 feature_hour = 9
-feature_measure = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
-add_square = False
+feature_measure = [9]
+add_square = True
 add_cube = False
 lambdaa = 0
 stop = 0.001
@@ -86,8 +86,6 @@ for i in range(iteration):
 # save model
 np.save("./model/model.npy",w)
 """
-
-
 
 #-----------------#
 #-----Testing-----#
