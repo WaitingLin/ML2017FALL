@@ -14,17 +14,18 @@ training_day = 20
 iteration = 1000000
 
 feature_hour = 9
-feature_measure = [9]
+feature_measure = [8,9,12]
 add_square = True
 add_cube = False
-lambdaa = 0.0001
-stop = 0.001
+lambdaa = 0
+stop = 0.0001
+b1 = 0.5
+b2 = 0.5
 
 """
 data = []
 for i in range(18):
 	data.append([])
-
 n_row = 0
 text = open('data/train.csv', 'r', encoding='big5')
 row = csv.reader(text , delimiter=",")
@@ -37,7 +38,6 @@ for r in row:
 				data[(n_row-1)%18].append(float(r[i]))
 	n_row = n_row+1
 text.close()
-
 #-----------------#
 #----Training-1---#
 #-----------------#
@@ -66,16 +66,15 @@ if add_square == True:
 	x = np.concatenate((x,x**2), axis=1)
 if add_cube == True:
 	x = np.concatenate((x,x**3), axis=1)
-
 # add bias
 x = np.concatenate((np.ones((x.shape[0],1)),x), axis=1)
-
 w = np.zeros(len(x[0]))
 lr = 10
 pre_cost = 1000000
-
 x_t = x.transpose()
 s_grad = np.zeros(len(x[0]))
+mom = np.zeros(len(x[0]))
+ada = np.zeros(len(x[0]))
 
 iteration1 = iteration
 for i in range(iteration):
@@ -84,8 +83,9 @@ for i in range(iteration):
 	cost = np.sqrt(loss / len(x))
 	grad = np.dot(x_t,dist) * 2 + 2 * lambdaa  * w 
 	s_grad += grad**2
-	ada = np.sqrt(s_grad)
-	w = w - lr * grad/ada
+	mom = b1 * mom + (1-b1) * grad
+	ada = b2 * ada + (1-b2) * np.sqrt(s_grad)
+	w = w - lr * mom/ada 
 	if i%100 == 0:
 		print ("\033[94miteration: \033[95m%d  \033[92mCost: \033[95m%f "%(i,cost))
 		if abs(pre_cost-cost) < stop:
@@ -93,13 +93,8 @@ for i in range(iteration):
 			break
 		pre_cost = cost
 cost1 = cost
-
-
 # save model
 np.save("./model/model_best.npy",w)
-
-# read model
-w = np.load("./model/model_best.npy")
 
 #-----------------#
 #---Validation-1--#
@@ -107,7 +102,6 @@ w = np.load("./model/model_best.npy")
 if training_day != 20:
 	v = []
 	ans = []
-
 	length_a_month = (20-training_day)*24 - feature_hour
 	for month in range(12):
 		for hour in range(length_a_month):
@@ -125,27 +119,22 @@ if training_day != 20:
 				pass
 	v = np.array(v)
 	ans = np.array(ans)
-
 	#add square term
 	if add_square == True:
 		v = np.concatenate((v,v**2), axis=1)
 	if add_cube == True:
 		v = np.concatenate((v,v**3), axis=1)
-
 	# add bias
 	v = np.concatenate((np.ones((v.shape[0],1)),v), axis=1)
-
 	pre = []
 	for i in range(len(v)):
 		a = np.dot(w,v[i])
 		pre.append(a)
 	# Cost
 	error1 = np.sqrt(sum((pre - ans)**2) / len(pre))
-
 #-----------------#
 #----Training-2---#
 #-----------------#
-
 	x = []
 	y = []
 	length_a_month = (20-training_day)*24 - feature_hour
@@ -165,23 +154,21 @@ if training_day != 20:
 				pass
 	x = np.array(x)
 	y = np.array(y)
-
 	#add square term
 	if add_square == True:
 		x = np.concatenate((x,x**2), axis=1)
 	if add_cube == True:
 		x = np.concatenate((x,x**3), axis=1)
-
 	# add bias
 	x = np.concatenate((np.ones((x.shape[0],1)),x), axis=1)
-
 	w = np.zeros(len(x[0]))
 	lr = 10
 	pre_cost = 1000000
-
 	x_t = x.transpose()
 	s_grad = np.zeros(len(x[0]))
-
+	mom = np.zeros(len(x[0]))
+	ada = np.zeros(len(x[0]))
+	
 	iteration2 = iteration
 	for i in range(iteration):
 		dist = np.dot(x,w) - y
@@ -189,23 +176,21 @@ if training_day != 20:
 		cost = np.sqrt(loss / len(x))
 		grad = np.dot(x_t,dist) * 2 + 2 * lambdaa  * w
 		s_grad += grad**2
-		ada = np.sqrt(s_grad)
-		w = w - lr * grad/ada
-		if i%1000 == 0:   
+		mom = b1 * mom + (1-b1) * grad
+		ada = b2 * ada + (1-b2) * np.sqrt(s_grad)
+		w = w - lr * mom/ada 
+		if i%100 == 0:   
 			print ("\033[94miteration: \033[95m%d  \033[92mCost: \033[95m%f "%(i,cost))
 			if abs(pre_cost-cost) < stop:
 				iteration2 = i
 				break
 			pre_cost = cost
 	cost2 = cost
-
 	#-----------------#
 	#---Validation-2--#
 	#-----------------#
-
 	v = []
 	ans = []
-
 	length_a_month = training_day*24 - feature_hour
 	for month in range(12):
 		for hour in range(length_a_month):
@@ -223,21 +208,17 @@ if training_day != 20:
 				pass
 	v = np.array(v)
 	ans = np.array(ans)
-
 	#add square term
 	if add_square == True:
 		v = np.concatenate((v,v**2), axis=1)
 	if add_cube == True:
 		v = np.concatenate((v,v**3), axis=1)
-
 	# add bias
 	v = np.concatenate((np.ones((v.shape[0],1)),v), axis=1)
-
 	pre = []
 	for i in range(len(v)):
 		a = np.dot(w,v[i])
 		pre.append(a)
-
 	error2 = np.sqrt(sum((pre - ans)**2) / len(pre))
 	#---------#
 	#--Print--#
@@ -247,7 +228,6 @@ if training_day != 20:
 	print("\033[94miteration: \033[95m%d  \033[92mCost: \033[95m%f \033[94mError:\033[95m%f"%(iteration2,cost2,error2))
 	print("\033[94mAvg Err: \033[95m%f"%((error1+error2)/2))
 """
-
 
 #-----------------#
 #-----Testing-----#
