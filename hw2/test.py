@@ -1,15 +1,11 @@
 import numpy as np
+import csv
 
+X = [1,2,3]
+w = [7,8,9]
 
-def sigmoid(x):
-	return 1 / (1 + np.exp(-x))
+y = np.dot(X,w)
+y1 = np.dot(w,X)
 
-x = [1, 2, 3 ,7,8,9]
-x = np.array(x)
-# normalization
-x = (x - x.min(0)) / (x.max(0) - x.min(0))
-print(x)
-
-y = sigmoid(x)
-
-print(y)
+print(y,7+16+27)
+print(y1)
