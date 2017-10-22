@@ -1,11 +1,16 @@
 import numpy as np
 import csv
 
-X = [1,2,3]
+x = [1,2,3,4]
 w = [7,8,9]
+tmp = []
 
-y = np.dot(X,w)
-y1 = np.dot(w,X)
+x = np.array(x)
+w = np.array(w)
+print(x,w)
 
-print(y,7+16+27)
-print(y1)
+tmp = x
+x = w
+w = tmp
+
+print(x,w)
