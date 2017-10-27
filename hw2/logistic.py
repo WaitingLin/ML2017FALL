@@ -13,7 +13,7 @@ def sigmoid(x):
 	res =  1 / (1.0 + np.exp(-x))
 	return np.clip(res,1e-8, 1-(1e-8))
 def normalize(X):
-	for i in range(0, X.shape[1], 1):
+	for i in range(X.shape[1]):
 		mean = np.mean(X[:,i])
 		std = np.std(X[:,i])
 		if std != 0:
