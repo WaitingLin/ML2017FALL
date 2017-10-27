@@ -1,5 +1,9 @@
 import csv 
 import numpy as np
+import sys
+
+test_url = sys.argv[1]
+output_url =  sys.argv[2]
 
 # global variable
 hit_rate1 = 0
@@ -8,7 +12,6 @@ hit_rate2 = 0
 def sigmoid(x):
 	res =  1 / (1.0 + np.exp(-x))
 	return np.clip(res,1e-8, 1-(1e-8))
-
 def normalize(X):
 	for i in range(0, X.shape[1], 1):
 		mean = np.mean(X[:,i])
@@ -18,7 +21,6 @@ def normalize(X):
 		else:
 			print("std is zero:",i,X[:,i])
 	return X
-
 def training_and_validation(X,val_X,Y,val_Y,type):
 	global hit_rate1, hit_rate2
 	w = np.zeros(len(X[0]))
@@ -66,10 +68,10 @@ feature = [0,1,2,3,4,5,
 add_squre = True
 add_cube = True
 lr = 1e-5
-iteration = 2000
+iteration = 10000
 #stop = 0.00000000001
-train_all_data = False
-
+train_all_data = True
+"""
 print("iteration:",iteration)
 print("lambda:",lambdaa)
 
@@ -168,10 +170,9 @@ if train_all_data == True:
 			
 		if i % 100 == 0:
 			cost = -(np.dot(Y,np.log(y)) + np.dot((1-Y),np.log(1-y)))
-			#print ('iteration: %d | Cost: %f  ' % ( i,cost/len(X)))
-		# Random shuffle
-		X, Y = _shuffle(X, Y)
-		X_t = X.transpose()
+			print ('iteration: %d | Cost: %f  ' % ( i,cost/len(X)))
+	# save model
+	np.save("./model/model_best.npy",w)
 
 	# Test
 	hit = 0
@@ -181,50 +182,48 @@ if train_all_data == True:
 		elif y[i] >= 0.5 and Y[i] == 1:
 			hit = hit + 1
 	print("Acc in training: ",hit/len(Y))
-	#--Testing--
-	test_X = []
-	n_row = 0
-	text = open('data/X_test' ,"r")
-	row = csv.reader(text , delimiter= ",")
-	for r in row:
-		if n_row == 0:
-			pass
-		else:
-			tmp = []
-			for i in range(len(feature)):
-				tmp.append(float(r[feature[i]]))
-			test_X.append(tmp)
-		n_row = n_row+1
-	text.close()
-	test_X = np.array(test_X)
-	# add square term
-	if add_squre == True:
-		test_X = np.concatenate((test_X,test_X**2), axis=1)
-	# add cube term
-	if add_cube == True:
-		test_X = np.concatenate((test_X,test_X**3), axis=1)
-	# normalization
-	for i in range(0, test_X.shape[1], 1):
-		mean = np.mean(test_X[:,i])
-		std = np.std(test_X[:,i])
-		if std != 0:
-			test_X[:,i] = (test_X[:,i] - mean) / std
-	# add bias
-	test_X = np.concatenate((np.ones((test_X.shape[0],1)),test_X), axis=1)
-
-	ans = []
-	for i in range(len(test_X)):
-		ans.append([str(i+1)])
-		a = sigmoid(np.dot(w,test_X[i]))
-		if a <= 0.5:
-			ans[i].append('0')
-		else:
-			ans[i].append('1')
-
-	filename = "result/predict.csv"
-	text = open(filename, "w+")
-	s = csv.writer(text,delimiter=',',lineterminator='\n')
-	s.writerow(["id","label"])
-	for i in range(len(ans)):
-		s.writerow(ans[i])
-	text.close()
+"""
+w = np.load("./model/model_best.npy")
+test_X = []
+n_row = 0
+text = open(test_url ,"r")
+row = csv.reader(text , delimiter= ",")
+for r in row:
+	if n_row == 0:
+		pass
+	else:
+		tmp = []
+		for i in range(len(feature)):
+			tmp.append(float(r[feature[i]]))
+		test_X.append(tmp)
+	n_row = n_row+1
+text.close()
+test_X = np.array(test_X)
+# add square term
+if add_squre == True:
+	test_X = np.concatenate((test_X,test_X**2), axis=1)
+# add cube term
+if add_cube == True:
+	test_X = np.concatenate((test_X,test_X**3), axis=1)
+# normalization
+for i in range(0, test_X.shape[1], 1):
+	mean = np.mean(test_X[:,i])
+	std = np.std(test_X[:,i])
+	if std != 0:
+		test_X[:,i] = (test_X[:,i] - mean) / std
+# add bias
+test_X = np.concatenate((np.ones((test_X.shape[0],1)),test_X), axis=1)
+ans = []
+for i in range(len(test_X)):
+	ans.append([str(i+1)])
+	a = sigmoid(np.dot(w,test_X[i]))
+	if a <= 0.5:
+		ans[i].append('0')
+	else:
+		ans[i].append('1')
+	text = open(output_url, "w+")
+s = csv.writer(text,delimiter=',',lineterminator='\n')
+s.writerow(["id","label"])
+for i in range(len(ans)):
+	s.writerow(ans[i])
+text.close()
