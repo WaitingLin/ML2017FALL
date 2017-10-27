@@ -206,11 +206,7 @@ if add_squre == True:
 if add_cube == True:
 	test_X = np.concatenate((test_X,test_X**3), axis=1)
 # normalization
-for i in range(0, test_X.shape[1], 1):
-	mean = np.mean(test_X[:,i])
-	std = np.std(test_X[:,i])
-	if std != 0:
-		test_X[:,i] = (test_X[:,i] - mean) / std
+test_X = normalize(test_X)
 # add bias
 test_X = np.concatenate((np.ones((test_X.shape[0],1)),test_X), axis=1)
 ans = []
