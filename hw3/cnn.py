@@ -3,6 +3,8 @@ import pandas as pd
 from keras.models import Sequential
 from keras.utils import np_utils  
 from keras.layers import Dense,Dropout,Flatten,Conv2D,MaxPooling2D
+from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
 import csv
 
 np.random.seed(87)
@@ -36,76 +38,42 @@ y_train = np_utils.to_categorical(y_train)
 
 # ---Construct model--- #
 # Conv layer
-model = Sequential()  
-# Create CN layer 1  
-model.add(Conv2D(filters=64,  
-				 kernel_size=(3,3),  
-				 padding='same',  
-				 input_shape=(48,48,1),  
-				 activation='relu'))  
- 
-model.add(MaxPooling2D(pool_size=(2,2)))  
-
-# Create CN layer 2  
-model.add(Conv2D(filters=32,  
-				 kernel_size=(3,3),  
-				 padding='same',  
-				 input_shape=(48,48,1),  
-				 activation='relu')) 
-
-# Create CN layer 3  
-model.add(Conv2D(filters=64,  
-				 kernel_size=(3,3),  
-				 padding='same',  
-				 input_shape=(48,48,1),  
-				 activation='relu'))  
- 
-model.add(MaxPooling2D(pool_size=(2,2)))  
-
-# Create CN layer 4 
-model.add(Conv2D(filters=32,  
-				 kernel_size=(3,3),  
-				 padding='same',  
-				 input_shape=(48,48,1),  
-				 activation='relu'))  
-
-# Create CN layer 5  
-model.add(Conv2D(filters=64,  
-				 kernel_size=(3,3),  
-				 padding='same',  
-				 input_shape=(48,48,1),  
-				 activation='relu'))  
- 
-model.add(MaxPooling2D(pool_size=(2,2)))  
-
-# Create CN layer 6  
-model.add(Conv2D(filters=128,  
-				 kernel_size=(2,2),  
-				 padding='same',  
-				 input_shape=(48,48,1),  
-				 activation='relu'))  
-
-model.add(MaxPooling2D(pool_size=(2,2)))  
-
+model = Sequential()
   
-# Add Dropout layer  
-model.add(Dropout(0.5))  
+model.add(Conv2D(filters=64, kernel_size=(3,3), padding='same', input_shape=(48,48,1), activation='relu'))
+model.add(MaxPooling2D(pool_size=(5,5)))
+model.add(Dropout(0.5))
 
+model.add(Conv2D(filters=64, kernel_size=(3,3), padding='same', input_shape=(48,48,1), activation='relu'))
+model.add(MaxPooling2D(pool_size=(5,5)))
+model.add(Dropout(0.5))
+ 
+model.add(Conv2D(filters=72, kernel_size=(3,3), padding='same', input_shape=(48,48,1), activation='relu'))
+model.add(MaxPooling2D(pool_size=(5,5)))
+model.add(Dropout(0.25))
+ 
+model.add(Conv2D(filters=72, kernel_size=(3,3), padding='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(3,3)))
+model.add(Dropout(0.25)) 
+
+model.add(Conv2D(filters=128, kernel_size=(3,3), padding='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(3,3)))
+model.add(Dropout(0.25)) 
 
 # Fully connected
 model.add(Flatten())  
-model.add(Dense(128, activation='relu'))  
+model.add(Dense(512, activation='relu'))  
 model.add(Dropout(0.5))
+
 model.add(Dense(7, activation='softmax')) 
 
-#model.summary()  
+model.summary()  
 
 # ---Training--- #
-print('Training ------------')
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) 
-train_history = model.fit(x=X_train_norm,  
-						  y=y_train, validation_split=0.2,  
-						  epochs=30, batch_size=256, verbose=1)  
+adam = Adam(lr=1e-3)
+model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy']) 
+early_stopping = EarlyStopping(monitor='val_loss', patience=10)
+train_history = model.fit(x=X_train_norm, y=y_train, validation_split=0.2, epochs=400, batch_size=128, callbacks=[early_stopping], verbose=1)  
 # ---Output--- #
 prediction = model.predict_classes(X_test_norm)
 
