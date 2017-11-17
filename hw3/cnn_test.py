@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import csv
 from keras.models import load_model
+import sys
 
-
-dataset_path = './test.csv'
-output_path = 'prediction_best.csv'
+dataset_path = sys.argv[1]
+output_path = sys.argv[2]
 
 # --- Read Data --- #
 data_test = pd.read_csv(dataset_path)

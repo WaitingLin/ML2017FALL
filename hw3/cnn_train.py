@@ -13,11 +13,13 @@ from keras.callbacks import EarlyStopping
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from keras.models import load_model
-
+import sys
 np.random.seed(87)
 
+train_url = sys.argv[1]
+
 #Read Data
-data_train = pd.read_csv('./train.csv')
+data_train = pd.read_csv(train_url)
 data_test = pd.read_csv('./test.csv')
 label_train = data_train.label.tolist()
 feature_train = data_train.feature.tolist()
