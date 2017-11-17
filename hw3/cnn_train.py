@@ -121,7 +121,7 @@ plt.legend(['train', 'valid'], loc='upper left')
 plt.savefig('cnn_accuracy.png')
 plt.clf()
 # save model 
-model.save('my_model.h5')
+model.save('model_best.h5')
 
 """
 # prediction
