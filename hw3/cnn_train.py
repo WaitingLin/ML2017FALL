@@ -20,10 +20,10 @@ train_url = sys.argv[1]
 
 #Read Data
 data_train = pd.read_csv(train_url)
-data_test = pd.read_csv('./test.csv')
+#data_test = pd.read_csv('./test.csv')
 label_train = data_train.label.tolist()
 feature_train = data_train.feature.tolist()
-feature_test = data_test.feature.tolist()
+#feature_test = data_test.feature.tolist()
 
 # train
 feature_train = np.array(feature_train)
@@ -38,15 +38,17 @@ for i in range(len(feature_train)):
 y_train = np.array(label_train)
 
 # test
+"""
 X_test = []
 for i in range(len(feature_test)):
 	tmp = feature_test[i].split(' ')
 	X_test.append(tmp)
 X_test = np.array(X_test)
+"""
 
 X_train = X_train.reshape(X_train.shape[0],48,48,1).astype('float32')
-X_test = X_test.reshape(X_test.shape[0],48,48,1).astype('float32')
-X_test_reverse = X_test[:,:,::-1,:]
+#X_test = X_test.reshape(X_test.shape[0],48,48,1).astype('float32')
+#X_test_reverse = X_test[:,:,::-1,:]
 
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
@@ -60,8 +62,8 @@ f.close()
 
 # ---Preprossing--- #
 #X_train_norm = X_train / 255.
-X_test_norm = X_test / 255.
-X_test_norm_reverse = X_test_reverse / 255
+#X_test_norm = X_test / 255.
+#X_test_norm_reverse = X_test_reverse / 255
 
 datagen = ImageDataGenerator(rescale=1./255, rotation_range=25, width_shift_range=0.25, height_shift_range=0.25, horizontal_flip=True)
 valgen = ImageDataGenerator(rescale=1./255)
@@ -121,6 +123,7 @@ plt.clf()
 # save model 
 model.save('my_model.h5')
 
+"""
 # prediction
 #prediction = model.predict_classes(X_test_norm)
 prediction1 = model.predict(X_test_norm)
@@ -140,3 +143,4 @@ s.writerow(["id","label"])
 for i in range(len(pre)):
 	s.writerow(pre[i])
 f.close()
+"""

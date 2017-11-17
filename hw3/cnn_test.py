@@ -28,7 +28,7 @@ X_test_norm_reverse = X_test_reverse / 255
 #print(X_test_norm_reverse.shape)
 
 # --- Restore model --- #
-model = load_model('best_model.h5')
+model = load_model('model_best.h5')
 
 # --- Prediction --- #
 prediction1 = model.predict(X_test_norm)
