@@ -10,14 +10,10 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 #from stemming.porter2 import stem
 #from tqdm import tqdm
 
-parser = argparse.ArgumentParser(description='Sentiment classification')
-parser.add_argument('--filter', default='n', choices=['all','n'])
-args = parser.parse_args()
-
 # ---Parameter--- #
-training_file = "training_label.txt"
+training_file = sys.argv[1]
 maxlen = 128
-batch_size = 512 #128
+batch_size = 512 
 epochs = 10
 embedding_dim = 256
 
@@ -32,12 +28,7 @@ with open(training_file, 'r') as f:
         x_train.append(lines[1])
 
 # ---Tokenizer--- #
-if args.filter == 'n':
-    tokenizer = Tokenizer(filters="\n")
-    #tokenizer = Tokenizer(num_words=nb_words)
-else:
-    tokenizer = Tokenizer()
-    #tokenizer = Tokenizer(num_words=nb_words)
+tokenizer = Tokenizer(filters="\n")
 tokenizer.fit_on_texts(x_train)
 #print(tokenizer.word_index)
 pk.dump(tokenizer, open("token.pk", 'wb'))
@@ -63,4 +54,3 @@ checkpoint = ModelCheckpoint(filepath=save_path, verbose=1, save_best_only=True,
                              save_weights_only=True, monitor='val_acc', mode='max')
 model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs,
           verbose=1, validation_split=0.1, callbacks=[checkpoint, earlystopping])
-

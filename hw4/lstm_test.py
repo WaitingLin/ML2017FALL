@@ -8,7 +8,8 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Embedding, LSTM, Bidirectional
 
 # ---Parameter--- #
-testing_data = "testing_data.txt"
+testing_data = sys.argv[1]
+output_path = sys.argv[2]
 maxlen = 128
 embedding_dim = 256
 # ---Read data--- #
@@ -46,12 +47,12 @@ prediction = model.predict(x_test, batch_size=512, verbose=1)
 result = [int(prediction[i]>=0.5) for i in range(len(prediction))]
 
 # ---Output--- #
-with open("prediction.csv", "w+") as f:
+with open(output_path, "w+") as f:
     w = csv.writer(f, delimiter=',', lineterminator='\n')
     w.writerow(["id","label"])
     for i in range(len(result)):
         w.writerow([i,result[i]])
-
+"""
 strr = ["today today is a good day, but it is hot",
         "today is hot, but it is a good day"]
 tokenizer.fit_on_texts(strr)
@@ -61,3 +62,4 @@ pre = model.predict(mystr, batch_size=512, verbose=1)
 print("prediction:")
 print(strr[0],":", pre[0])
 print(strr[1],":", pre[1])
+"""
