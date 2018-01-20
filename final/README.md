@@ -5,9 +5,9 @@
 * Gensim做word to vector
 
 ## Run best model 
-* python3 answer.py \<size> \<window> \<testing_data path>
+* bash best.sh \<testing_data.csv path> \<prediction file path>
       
-      python3 answer.py 100 25 ./data/testing_data.csv
+      bash best.sh ./data/testing_data.csv prediction.csv
 
 ## Training
 [1] 執行segment_all.py，將所有的training data斷詞，結果會存到./segment/seg_all.txt中。
@@ -24,7 +24,7 @@
 
 ## Predict
 執行answer.py，將題目轉成
-* python3 answer.py \<size> \<window> \<testing_data path>
+* python3 answer.py \<size> \<window> \<testing_data path> \<prediction file path>
 * 兩個參數: size, window
 
-      python3 answer.py 100 25 ./data/testing_data.csv
+      python3 answer.py 100 25 ./data/testing_data.csv ./prediction/100_25.csv
