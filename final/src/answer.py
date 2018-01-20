@@ -1,19 +1,16 @@
 from gensim.models import Word2Vec
-import jieba
+import jieba, sys, os
 import numpy as np
-import sys, os
-
-if not os.path.exists('./prediction'):
-    os.makedirs('./prediction')
 
 # Embedding dimension
 EBD_DIM = int(sys.argv[1])
 model = "./model/"+sys.argv[1]+"_"+sys.argv[2]+".model.bin"
-save_path = "./prediction/"+sys.argv[1]+"_"+sys.argv[2]+".csv"
+testing_data_path = sys.argv[3]
+save_path = sys.argv[4]
 
 jieba.set_dictionary('./data/dict.txt.big')
 
-ftest = open("./data/testing_data.csv", "r")
+ftest = open(testing_data_path, "r")
 ftest.readline()
 
 Question = []
