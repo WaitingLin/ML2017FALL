@@ -3,8 +3,8 @@ import jieba
 import numpy as np
 import sys, os
 
-if not os.path.exists('./result'):
-    os.makedirs('./result')
+if not os.path.exists('./prediction'):
+    os.makedirs('./prediction')
 
 # Embedding dimension
 EBD_DIM = int(sys.argv[1])
