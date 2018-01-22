@@ -1,4 +1,4 @@
 #! /bin/bash
 
-python3 answer 100 25 $1 $2 
+python3 answer.py 100 26 $1 $2 
 exit 0
